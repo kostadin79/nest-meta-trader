@@ -1,4 +1,4 @@
-import {Rate} from '@terminal/api-interfaces';
+import { Rate } from '../models/rates';
 
 export interface TradingAccount {
   currency: string;
@@ -31,7 +31,6 @@ export type OrderList = Array<Order>;
 export interface MessageCallbak<T> {
   (event: string, data: T): void;
 }
-
 
 export type RatesDataList = Array<Rate>;
 // export type afterMessageCallbak = <T>(messageType:string,data:T) => void;

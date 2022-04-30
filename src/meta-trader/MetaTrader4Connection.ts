@@ -3,7 +3,7 @@ import { Listener } from './Listener';
 import * as zmq from 'zeromq/v5-compat';
 import * as url from 'url';
 
-export interface ResponeMessage {
+export interface ResponseMessage {
   type: string;
   id: string;
   err: any;
@@ -19,10 +19,22 @@ export class MetaTrader4Connection extends Listener {
   private apiKey: string | null = null;
   private reqUrl: string | null = null;
   private pullUrl: string | null = null;
-  private requests: { reqId: number; reject: any; resolve: any;timeout: any;}[] = [];
+  private requests: {
+    reqId: number;
+    reject: any;
+    resolve: any;
+    timeout: any;
+  }[] = [];
 
-  constructor({ apiKey = 'CHANGEME', reqUrl,pullUrl,
-  }: { apiKey: string;reqUrl: string; pullUrl: string;}) {
+  constructor({
+    apiKey = 'CHANGEME',
+    reqUrl,
+    pullUrl,
+  }: {
+    apiKey: string;
+    reqUrl: string;
+    pullUrl: string;
+  }) {
     super();
     this.apiKey = apiKey;
     this.reqUrl = reqUrl;
@@ -49,7 +61,9 @@ export class MetaTrader4Connection extends Listener {
       const message = this.parseMessage(msg);
       if (message.type === 'RESPONSE') {
         const i = this.requests.findIndex(
-          (r) => r.reqId === parseInt(message.id),10);
+          (r) => r.reqId === parseInt(message.id),
+          10,
+        );
         if (message.err == null) {
           this.requests[i].resolve(message.json);
           this.requests.splice(i, 1);
@@ -142,7 +156,7 @@ export class MetaTrader4Connection extends Listener {
     this.addListener('onPullMessage', callback);
   }
 
-  private parseMessage(message: any): ResponeMessage {
+  private parseMessage(message: any): ResponseMessage {
     const split = message.toString().split('|');
 
     const type = split.shift();

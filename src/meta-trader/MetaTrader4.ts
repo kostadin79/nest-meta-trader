@@ -1,20 +1,25 @@
 import { OP, REQUEST, UNIT_CONTRACTS } from './Enum';
 import { MetaTrader4Connection } from './MetaTrader4Connection';
-import { Order, TradingAccount, OrderList, RatesDataList,MessageCallbak  } from './Interface';
+import {
+  Order,
+  TradingAccount,
+  OrderList,
+  RatesDataList,
+  MessageCallbak,
+} from './Interface';
 
 export class MetaTrader4 extends MetaTrader4Connection {
   public getRates(
-    symbol: string
+    symbol: string,
   ): Promise<{ bid: number; ask: number; symbol: string }> {
     // console.log('symbol->',symbol)
     return this.request(REQUEST.RATES, symbol);
   }
 
-
   public getMultipleRates(
-    symbols: string[]
+    symbols: string[],
   ): Promise<{ bid: number; ask: number; symbol: string }> {
-    console.log('symbol->',symbols);
+    console.log('symbol->', symbols);
     return this.request(REQUEST.MULTIPLE_RATES, symbols.join(','));
   }
 
@@ -22,12 +27,19 @@ export class MetaTrader4 extends MetaTrader4Connection {
     return this.request(REQUEST.ACCOUNT);
   }
 
-
   public getOrders(): Promise<Order[]> {
     return this.request(REQUEST.ORDERS);
   }
 
-  public buy({ symbol, volume, comment = 'null', sl = 0, tp = 0, slippage = 0, magicNumber = 0,}: {
+  public buy({
+    symbol,
+    volume,
+    comment = 'null',
+    sl = 0,
+    tp = 0,
+    slippage = 0,
+    magicNumber = 0,
+  }: {
     symbol: string;
     volume: number;
     comment: string;
@@ -35,7 +47,7 @@ export class MetaTrader4 extends MetaTrader4Connection {
     tp?: number;
     slippage?: number;
     magicNumber: number;
-  }): Promise< void|{ ticket: number }> {
+  }): Promise<void | { ticket: number }> {
     return volume <= 0
       ? Promise.reject('Volume is lower or equals 0')
       : this.request(
@@ -49,7 +61,7 @@ export class MetaTrader4 extends MetaTrader4Connection {
           tp,
           comment,
           magicNumber,
-          UNIT_CONTRACTS
+          UNIT_CONTRACTS,
         );
   }
 
@@ -84,7 +96,7 @@ export class MetaTrader4 extends MetaTrader4Connection {
       tp,
       comment,
       magicNumber,
-      UNIT_CONTRACTS
+      UNIT_CONTRACTS,
     );
   }
 
@@ -96,9 +108,7 @@ export class MetaTrader4 extends MetaTrader4Connection {
     return this.request(REQUEST.CLOSE_ALL_MARKET_ORDERS, symbol);
   }
 
-  public getLastCandles(
-    symbol: string
-  ): Promise<
+  public getLastCandles(symbol: string): Promise<
     {
       time: string;
       open: number;
@@ -111,19 +121,17 @@ export class MetaTrader4 extends MetaTrader4Connection {
     return this.request(REQUEST.CHART, symbol);
   }
 
-
-
-	listen = {
-		account: (callBack: MessageCallbak<TradingAccount>) => {
-			this.addListener("ACCOUNT", callBack);
-		},
-		orders: (callBack: MessageCallbak<OrderList>) => {
-			this.addListener("ORDERS", callBack);
-		},
-		prices: (callBack: MessageCallbak<RatesDataList>) => {
-			this.addListener("PRICES", callBack);
-		}
-	};
+  listen = {
+    account: (callBack: MessageCallbak<TradingAccount>) => {
+      this.addListener('ACCOUNT', callBack);
+    },
+    orders: (callBack: MessageCallbak<OrderList>) => {
+      this.addListener('ORDERS', callBack);
+    },
+    prices: (callBack: MessageCallbak<RatesDataList>) => {
+      this.addListener('PRICES', callBack);
+    },
+  };
 
   subscribe = {
     account: () => {

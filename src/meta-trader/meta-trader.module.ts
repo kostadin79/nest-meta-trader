@@ -3,6 +3,6 @@ import { MetaTraderService } from './meta-trader.service';
 
 @Module({
   providers: [MetaTraderService],
-  exports:[MetaTraderService]
+  exports: [MetaTraderService],
 })
 export class MetaTraderModule {}

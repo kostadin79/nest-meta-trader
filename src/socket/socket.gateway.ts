@@ -4,14 +4,14 @@ import {
   WebSocketServer,
   OnGatewayInit,
   WsResponse,
-MessageBody
+  MessageBody,
 } from '@nestjs/websockets';
 import { from, Observable, Subscription } from 'rxjs';
 import { Server } from 'ws';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { REQUEST } from '../meta-trader/Enum';
-import {Rate} from '@terminal/api-interfaces';
+import { Rate } from '../models/rates';
 
 import { MetaTraderService } from '../meta-trader/meta-trader.service';
 
@@ -47,21 +47,24 @@ export class SocketGateway implements OnGatewayInit {
   handleOpenPositions(): any {
     console.log('OPEN_POSITIONS');
     const event = 'OPEN_POSITIONS';
-    return from(this.mtService.getInitialOpenPositions()).pipe(map(data =>({event,data})));
+    return from(this.mtService.getInitialOpenPositions()).pipe(
+      map((data) => ({ event, data })),
+    );
   }
 
   @SubscribeMessage('CHART')
   handleChart(@MessageBody() data: string): any {
     console.log('CHART');
     const event = 'CHART';
-    return from(this.mtService.getChartData(data)).pipe(map(data =>({event,data})));
+    return from(this.mtService.getChartData(data)).pipe(
+      map((data) => ({ event, data })),
+    );
   }
-
 
   @SubscribeMessage('SUBSCRIBE_OPEN_POSITIONS')
   subscribeOpenPositions(): any {
     console.log('SUBSCRIBE_OPEN_POSITIONS');
-    return this.mtService.listenForOrders()
+    return this.mtService.listenForOrders();
   }
 
   @SubscribeMessage('UNSUBSCRIBE_OPEN_POSITIONS')
@@ -72,24 +75,24 @@ export class SocketGateway implements OnGatewayInit {
 
   @SubscribeMessage('SUBSCRIBE_RATES')
   subscribeRates(@MessageBody() data: string[]): any {
-    console.log('PRICES',data);
-   return this.mtService.listenForRates(data);
-
+    console.log('PRICES', data);
+    return this.mtService.listenForRates(data);
   }
   @SubscribeMessage('UNSUBSCRIBE_RATES')
   unsubscribeRates(@MessageBody() data: string[]): any {
-    console.log('PRICES',data);
-   return this.mtService.stopListenForPrices(data);
-
+    console.log('PRICES', data);
+    return this.mtService.stopListenForPrices(data);
   }
-
 
   @SubscribeMessage('MULTIPLE_RATES')
-  handleMultipleRates(@MessageBody() data: string[]): Observable<WsResponse<{event:string,data:Rate[]}>> {
-    console.log('PRICES',data);
-  //  return this.mtService.listenForPrices(data);
-  const event = 'MULTIPLE_RATES';
-    return from(this.mtService.getInitialRates(data)).pipe(map(data => ({event,data})));
+  handleMultipleRates(
+    @MessageBody() data: string[],
+  ): Observable<WsResponse<{ event: string; data: Rate[] }>> {
+    console.log('PRICES', data);
+    //  return this.mtService.listenForPrices(data);
+    const event = 'MULTIPLE_RATES';
+    return from(this.mtService.getInitialRates(data)).pipe(
+      map((data) => ({ event, data })),
+    );
   }
-
 }
