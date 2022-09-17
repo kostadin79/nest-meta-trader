@@ -9,6 +9,40 @@ import {
 } from './Interface';
 
 export class MetaTrader4 extends MetaTrader4Connection {
+  listen = {
+    account: (callBack: MessageCallbak<TradingAccount>) => {
+      this.addListener('ACCOUNT', callBack);
+    },
+    orders: (callBack: MessageCallbak<OrderList>) => {
+      this.addListener('ORDERS', callBack);
+    },
+    prices: (callBack: MessageCallbak<RatesDataList>) => {
+      this.addListener('PRICES', callBack);
+    },
+  };
+  subscribe = {
+    account: () => {
+      return this.request(REQUEST.SUBSCRIBE_ACCOUNT);
+    },
+    orders: () => {
+      return this.request(REQUEST.SUBSCRIBE_ORDERS);
+    },
+    prices: (symbols: string[]) => {
+      return this.request(REQUEST.SUBSCRIBE_PRICES, symbols.join(','));
+    },
+  };
+  unSubscribe = {
+    account: () => {
+      return this.request(REQUEST.UNSUBSCRIBE_ACCOUNT);
+    },
+    orders: () => {
+      return this.request(REQUEST.UNSUBSCRIBE_ORDERS);
+    },
+    prices: (symbols: string[]) => {
+      return this.request(REQUEST.UNSUBSCRIBE_PRICES, symbols.join(','));
+    },
+  };
+
   public getRates(
     symbol: string,
   ): Promise<{ bid: number; ask: number; symbol: string }> {
@@ -120,40 +154,4 @@ export class MetaTrader4 extends MetaTrader4Connection {
   > {
     return this.request(REQUEST.CHART, symbol);
   }
-
-  listen = {
-    account: (callBack: MessageCallbak<TradingAccount>) => {
-      this.addListener('ACCOUNT', callBack);
-    },
-    orders: (callBack: MessageCallbak<OrderList>) => {
-      this.addListener('ORDERS', callBack);
-    },
-    prices: (callBack: MessageCallbak<RatesDataList>) => {
-      this.addListener('PRICES', callBack);
-    },
-  };
-
-  subscribe = {
-    account: () => {
-      return this.request(REQUEST.SUBSCRIBE_ACCOUNT);
-    },
-    orders: () => {
-      return this.request(REQUEST.SUBSCRIBE_ORDERS);
-    },
-    prices: (symbols: string[]) => {
-      return this.request(REQUEST.SUBSCRIBE_PRICES, symbols.join(','));
-    },
-  };
-
-  unSubscribe = {
-    account: () => {
-      return this.request(REQUEST.UNSUBSCRIBE_ACCOUNT);
-    },
-    orders: () => {
-      return this.request(REQUEST.UNSUBSCRIBE_ORDERS);
-    },
-    prices: (symbols: string[]) => {
-      return this.request(REQUEST.UNSUBSCRIBE_PRICES, symbols.join(','));
-    },
-  };
 }

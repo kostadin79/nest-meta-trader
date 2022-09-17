@@ -13,8 +13,8 @@ import { MetaTrader4 } from './MetaTrader4';
 export class MetaTraderService {
   MetaTrader = new MetaTrader4({
     apiKey: 'CHANGEME',
-    reqUrl: 'tcp://127.0.0.1:5555',
-    pullUrl: 'tcp://127.0.0.1:5556',
+    reqUrl: 'tcp://host.docker.internal:5555',
+    pullUrl: 'tcp://host.docker.internal:5556',
   });
 
   subscribedForRates = false;
