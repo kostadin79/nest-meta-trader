@@ -8,20 +8,29 @@ import {
 } from './Interface';
 
 import { MetaTrader4 } from './MetaTrader4';
+import { ConfigService } from '@nestjs/config';
+
+interface MetaTraderSocket {
+  apiKey: string;
+  reqUrl: string;
+  pullUrl: string;
+}
 
 @Injectable()
 export class MetaTraderService {
+  socketMetaTrader =
+    this.configService.get<MetaTraderSocket>('metaTraderSocket');
   MetaTrader = new MetaTrader4({
-    apiKey: 'CHANGEME',
-    reqUrl: 'tcp://host.docker.internal:5555',
-    pullUrl: 'tcp://host.docker.internal:5556',
+    apiKey: this.socketMetaTrader.apiKey,
+    reqUrl: this.socketMetaTrader.reqUrl,
+    pullUrl: this.socketMetaTrader.pullUrl,
   });
 
   subscribedForRates = false;
   subscribedForOpenPositions = false;
   messageSubject: Subject<any> = new Subject<unknown>();
 
-  constructor() {}
+  constructor(private configService: ConfigService) {}
 
   getChartData(symbol: string) {
     return this.MetaTrader.getLastCandles(symbol);
@@ -76,6 +85,7 @@ export class MetaTraderService {
   };
 
   connect() {
+    console.log('this.socketMetaTrader', this.socketMetaTrader);
     this.MetaTrader.connect();
     this.MetaTrader.onConnect(() => {
       console.log('Connected');
