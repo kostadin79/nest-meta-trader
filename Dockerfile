@@ -1,6 +1,8 @@
 FROM node:16.20.0-alpine3.17
 RUN apk --no-cache add --virtual .builds-deps build-base python3
 WORKDIR /app
+ARG SSL
+ENV SSL $SSL
 COPY ./package.json /app/
 RUN npm install
 COPY . /app/

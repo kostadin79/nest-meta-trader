@@ -15,7 +15,7 @@ export class MetaTrader4Connection extends Listener {
   private pullSocket = zmq.socket('pull');
   private requestId = 1;
   private requestQueueValue = 5;
-  private requestTimeoutValue = 15000;
+  private requestTimeoutValue = 30000;
   private apiKey: string | null = null;
   private reqUrl: string | null = null;
   private pullUrl: string | null = null;
