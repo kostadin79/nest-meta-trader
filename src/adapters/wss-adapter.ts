@@ -13,8 +13,8 @@ export class WssAdapter implements WebSocketAdapter {
     if (process.env.SSL) {
       const server = https
         .createServer({
-          cert: readFileSync('./app/certs/ssl-bundle.pem'),
-          key: readFileSync('./app/certs/ssl-private.pem'),
+          cert: readFileSync('/app/certs/ssl-bundle.pem'),
+          key: readFileSync('/app/certs/ssl-private.pem'),
         })
         .listen(port);
       return new WebSocket.Server({ server, ...options });
